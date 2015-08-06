@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Notification Listener</title>
+    <link rel="stylesheet" href="webjars/bootstrap/3.3.1/css/bootstrap.min.css"/>
+    <script src="webjars/jquery/2.1.3/dist/jquery.min.js"></script>
+    <script src="webjars/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+</head>
+<body>
+<div class="container">
+    <div class="row">
+        <div class="col-md-10 col-md-push-1">
+            <div id="notificationLog" style="height: 90vh">
+
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    var myName = null;
+    var form = document.getElementById('form');
+    var nameForm = null;
+    var connected = false;
+
+    var setMyName = function () {
+        myName = $('#myname').val();
+        $('#myModal').modal('hide');
+        return false;
+    };
+
+    var connect = function () {
+        var source = new EventSource('http://localhost:8081/notification/stream');
+
+        source.addEventListener('open', function (e) {
+            console.log('connected');
+        });
+        source.addEventListener('message', function (e) {
+            console.log(e.data);
+            var message = JSON.parse(e.data);
+            var outMesage = $(
+                    '<div class="row">' +
+                    '  <div class="col-md-2"><strong>' + message.id + '</strong></div>' +
+                    '  <div class="col-md-10"><p>' + message.label + '</p></div>' +
+                    '</div>'
+            );
+            $('#notificationLog').append(outMesage);
+        }, false);
+
+        source.addEventListener('error', function (e) {
+            if (e.readyState == EventSource.CLOSED) {
+                connected = false;
+                connect();
+            }
+        }, false);
+    };
+
+
+    $(function () {
+        connect();
+    });
+</script>
+
+</body>
+</html>

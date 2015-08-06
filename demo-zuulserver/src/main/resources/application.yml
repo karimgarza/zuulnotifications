@@ -1,0 +1,5 @@
+zuul:  
+  routes:
+    notification:
+          path: /notification/**
+          url: http://localhost:8086
