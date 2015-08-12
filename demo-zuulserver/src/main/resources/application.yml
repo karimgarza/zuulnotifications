@@ -1,5 +1,8 @@
 zuul:  
   routes:
+    async:
+          path: /async/**
+          url: http://localhost:9090    
     notification:
           path: /notification/**
           url: http://localhost:8086
